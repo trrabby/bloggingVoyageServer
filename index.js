@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors');
 const app = express();
 require('dotenv').config();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 8000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(cors());
@@ -33,11 +33,11 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
 
-    const database = client.db("blogsDB");
-    const itemCollection = database.collection("allBlogs");
+    const database = client.db("BloggingVoyage");
+    const itemCollection = database.collection("Blogs");
     const itemCollection2 = database.collection("wishListBlogs")
 
-    app.get('/items', async (req, res) => {
+    app.get('/blogs', async (req, res) => {
       const cursor = itemCollection.find()
       const result = await cursor.toArray();
       res.send(result)
