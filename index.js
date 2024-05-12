@@ -103,6 +103,18 @@ async function run() {
       }
       })
 
+      app.get('/comments/:postId', async (req, res) => {
+      
+        try {
+          const result = await itemCollection3.find({ postId: req.params.postId }).toArray();
+          res.send(result)
+        }
+        catch (err) {
+          console.log(err)
+        }
+  
+      })
+
     app.post('/blogs', async (req, res) => {
       const item = req.body;
       // console.log(user, "from server")
