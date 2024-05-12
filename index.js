@@ -43,6 +43,7 @@ async function run() {
     const database = client.db("BloggingVoyage");
     const itemCollection = database.collection("Blogs");
     const itemCollection2 = database.collection("wishListBlogs")
+    const itemCollection3 = database.collection("comments")
 
     app.get('/blogs', async (req, res) => {
       const cursor = itemCollection.find()
@@ -55,35 +56,6 @@ async function run() {
       }
 
     })
-
-    app.post('/blogs', async (req, res) => {
-      const item = req.body;
-      // console.log(user, "from server")
-      try {
-        const result = await itemCollection.insertOne(item);
-        res.send(result);
-      }
-      catch (err) {
-        console.log(err)
-      }
-
-
-    });
-
-
-    app.post('/wishlist', async (req, res) => {
-      const item = req.body;
-      // console.log(user, "from server")
-
-      try {
-        const result = await itemCollection2.insertOne(item);
-        res.send(result);
-      }
-      catch (error) {
-        console.log(error.errmsg)
-      }
-
-    });
 
     app.get('/wishlist', async (req, res) => {
       const cursor = itemCollection2.find()
@@ -106,7 +78,6 @@ async function run() {
       catch (err) {
         console.log(err)
       }
-
     })
 
     app.get('/wishlist/:email', async (req, res) => {
@@ -120,6 +91,59 @@ async function run() {
       }
 
     })
+
+    app.get('/comments', async (req, res) => {
+      const cursor = itemCollection3.find()
+      try {
+        const result = await cursor.toArray();
+        res.send(result)
+      }
+      catch (error) {
+        console.log(error)
+      }
+      })
+
+    app.post('/blogs', async (req, res) => {
+      const item = req.body;
+      // console.log(user, "from server")
+      try {
+        const result = await itemCollection.insertOne(item);
+        res.send(result);
+      }
+      catch (err) {
+        console.log(err)
+      }
+    });
+
+    app.post('/wishlist', async (req, res) => {
+      const item = req.body;
+      // console.log(user, "from server")
+
+      try {
+        const result = await itemCollection2.insertOne(item);
+        res.send(result);
+      }
+      catch (error) {
+        console.log(error.errmsg)
+      }
+
+    });
+
+    app.post('/comments', async (req, res) => {
+      const item = req.body;
+      console.log(item, "from server")
+      try {
+        const result = await itemCollection3.insertOne(item);
+        res.send(result);
+      }
+      catch (err) {
+        console.log(err)
+      }
+    });
+
+   
+
+   
 
     app.delete('/wishlists/:id', async (req, res) => {
       const id = req.params.id;
