@@ -8,7 +8,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 app.use(
   cors({
     origin: [
-      "http://localhost:5173"
+      "http://localhost:5173", "https://blogging-voyage-a-11.netlify.app", "https://bloggingvoyage-236e6.web.app"
     ],
     credentials: true,
   })
