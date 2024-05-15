@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const app = express();
 require('dotenv').config();
 const port = process.env.PORT || 8000;
@@ -47,8 +48,10 @@ jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) =>{
 app.post("/jwt", async (req, res) => {
   const user = req.body;
   console.log("user for token", user);
-  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-
+  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET,{
+    expiresIn: '1d'
+  });
+  // console.log(token)
   res.cookie("token", token, cookieOptions).send({ success: true });
 });
 
@@ -103,7 +106,7 @@ async function run() {
 
     })
 
-    app.get('/wishlist', async (req, res) => {
+    app.get('/wishlist',verifyToken, async (req, res) => {
       const cursor = itemCollection2.find()
       try {
         const result = await cursor.toArray();
@@ -126,7 +129,7 @@ async function run() {
       }
     })
 
-    app.get('/wishlist/:email', async (req, res) => {
+    app.get('/wishlist/:email', verifyToken, async (req, res) => {
       
       try {
         const result = await itemCollection2.find({ wishListersEmail: req.params.email }).toArray();
