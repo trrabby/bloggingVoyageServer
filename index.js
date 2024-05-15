@@ -4,6 +4,7 @@ const app = express();
 require('dotenv').config();
 const port = process.env.PORT || 8000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const cookieParser = require('cookie-parser');
 
 app.use(
   cors({
@@ -14,6 +15,51 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(cookieParser())
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+};
+//localhost:5000 and localhost:5173 are treated as same site.  so sameSite value must be strict in development server.  in production sameSite will be none
+// in development server secure will false .  in production secure will be true
+
+
+// Verify Token
+const verifyToken=(req, res, next)=>{
+const token = req?.cookie?.token
+// no token
+if(!token){
+  return res.status(401.).send({messsage: "unauthorized access"})
+}
+// if token
+jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) =>{
+  if(err){
+    return res.status(401).send({message: "unauthorized access"})
+  }
+  req.user = decoded;
+  next()
+})
+}
+
+//creating Token
+app.post("/jwt", async (req, res) => {
+  const user = req.body;
+  console.log("user for token", user);
+  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
+  res.cookie("token", token, cookieOptions).send({ success: true });
+});
+
+//clearing Token
+app.post("/logout", async (req, res) => {
+  const user = req.body;
+  console.log("logging out", user);
+  res
+    .clearCookie("token", { ...cookieOptions, maxAge: 0 })
+    .send({ success: true });
+});
 
 app.get('/', (req, res) => {
   res.send('Server is running')
@@ -242,7 +288,7 @@ async function run() {
     })
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   }
 
