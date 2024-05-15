@@ -72,7 +72,6 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 })
 
-
 //   const uri = "mongodb://localhost:27017"; 
 const uri = `mongodb+srv://${process.env.DB_User}:${process.env.DB_Pass}@cluster0.xygzlb8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -88,7 +87,6 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-
     const database = client.db("BloggingVoyage");
     const itemCollection = database.collection("Blogs");
     const itemCollection2 = database.collection("wishListBlogs")
@@ -166,7 +164,7 @@ async function run() {
 
     app.post('/blogs', async (req, res) => {
       const item = req.body;
-      // console.log(user, "from server")
+      
       try {
         const result = await itemCollection.insertOne(item);
         res.send(result);
