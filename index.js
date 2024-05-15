@@ -118,7 +118,7 @@ async function run() {
 
     })
 
-    app.get('/wishlists/:id', async (req, res) => {
+    app.get('/wishlists/:id',verifyToken, async (req, res) => {
       
       try {
         const result = await itemCollection2.findOne({ _id: new ObjectId(req.params.id) });
@@ -141,7 +141,7 @@ async function run() {
 
     })
 
-    app.get('/comments', async (req, res) => {
+    app.get('/comments',verifyToken, async (req, res) => {
       const cursor = itemCollection3.find()
       try {
         const result = await cursor.toArray();
@@ -152,7 +152,7 @@ async function run() {
       }
       })
 
-      app.get('/comments/:postId', async (req, res) => {
+      app.get('/comments/:postId',verifyToken, async (req, res) => {
       
         try {
           const result = await itemCollection3.find({ postId: req.params.postId }).toArray();
@@ -222,7 +222,7 @@ async function run() {
 
 
 
-    app.get('/blogs/:id', async (req, res) => {
+    app.get('/blogs/:id',verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await itemCollection.findOne(query);
@@ -243,7 +243,7 @@ async function run() {
 
     })
 
-    app.get('/blogs-cat/:category', async (req, res) => {
+    app.get('/blogs-cat/:category',verifyToken, async (req, res) => {
       console.log(req.params.category)
 
       try {
@@ -257,7 +257,7 @@ async function run() {
     })
 
     /* API to search text from title */
-    app.get('/blogs-head/:title', async (req, res) => {
+    app.get('/blogs-head/:title',verifyToken, async (req, res) => {
       const text = (req.params.title)
 
       try {
