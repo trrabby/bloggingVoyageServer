@@ -57,7 +57,7 @@ app.post("/jwt", async (req, res) => {
 
 //clearing Token
 app.post("/logout", async (req, res) => {
-  const user = req.body;
+  const user = await req.body;
   console.log("logging out", user);
   res
     .clearCookie("token", { ...cookieOptions, maxAge: 0 })
@@ -104,11 +104,30 @@ async function run() {
 
     })
 
+    app.get('/blogs-cat/:category', async (req, res) => {
+      
+      try {
+        const result = await itemCollection.find({category: req.params.category }).toArray();
+        res.send(result)
+        
+      }
+      catch (err) {
+        console.log(err)
+      }
+
+    })
+
     app.get('/wishlist',verifyToken, async (req, res) => {
       const cursor = itemCollection2.find()
+      console.log(req.user)
+      
+      if(req.user.email !== req.query.email){
+        return res.status(403).send({message: 'forbidden access'})
+      }
       try {
         const result = await cursor.toArray();
         res.send(result)
+        
       }
       catch (error) {
         console.log(error)
@@ -116,7 +135,7 @@ async function run() {
 
     })
 
-    app.get('/wishlists/:id',verifyToken, async (req, res) => {
+    app.get('/wishlists/:id', async (req, res) => {
       
       try {
         const result = await itemCollection2.findOne({ _id: new ObjectId(req.params.id) });
@@ -127,11 +146,12 @@ async function run() {
       }
     })
 
-    app.get('/wishlist/:email', verifyToken, async (req, res) => {
+    app.get('/wishlist/:email', async (req, res) => {
       
       try {
         const result = await itemCollection2.find({ wishListersEmail: req.params.email }).toArray();
         res.send(result)
+        
       }
       catch (err) {
         console.log(err)
@@ -139,7 +159,7 @@ async function run() {
 
     })
 
-    app.get('/comments',verifyToken, async (req, res) => {
+    app.get('/comments', async (req, res) => {
       const cursor = itemCollection3.find()
       try {
         const result = await cursor.toArray();
@@ -150,7 +170,7 @@ async function run() {
       }
       })
 
-      app.get('/comments/:postId',verifyToken, async (req, res) => {
+      app.get('/comments/:postId', async (req, res) => {
       
         try {
           const result = await itemCollection3.find({ postId: req.params.postId }).toArray();
@@ -220,7 +240,7 @@ async function run() {
 
 
 
-    app.get('/blogs/:id',verifyToken, async (req, res) => {
+    app.get('/blogs/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await itemCollection.findOne(query);
@@ -241,7 +261,7 @@ async function run() {
 
     })
 
-    app.get('/blogs-cat/:category',verifyToken, async (req, res) => {
+    app.get('/blogs-cat/:category', async (req, res) => {
       console.log(req.params.category)
 
       try {
@@ -255,7 +275,7 @@ async function run() {
     })
 
     /* API to search text from title */
-    app.get('/blogs-head/:title',verifyToken, async (req, res) => {
+    app.get('/blogs-head/:title', async (req, res) => {
       const text = (req.params.title)
 
       try {
